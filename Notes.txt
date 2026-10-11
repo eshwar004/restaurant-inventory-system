@@ -1,0 +1,147 @@
+                    OUR BACKEND
+                        │
+                        ▼
+                     Python
+                        │
+                        ▼
+                    FastAPI
+                        │
+                        ▼
+                   SQLAlchemy
+                        │
+                        ▼
+                    Psycopg
+                        │
+                        ▼
+              ┌─────────────────┐
+              │   PostgreSQL    │
+              │                 │
+              │ restaurant_db   │
+              └─────────────────┘
+                        ▲
+                        │
+                    Alembic
+                        │
+                 migrations
+                        │
+                        ▼
+                Database Schema
+Mac
+ │
+ └── Docker Desktop
+       │
+       └── PostgreSQL 16
+             │
+             └── restaurant_db
+restaurant.py
+      ↓
+Restaurant
+      ↓
+Base.metadata
+      ↓
+Alembic
+      ↓
+PostgreSQL
+
+
+
+===========
+API request
+    ↓
+get_db()
+    ↓
+Open PostgreSQL session
+    ↓
+API uses database
+    ↓
+Request finishes
+    ↓
+Session closes
+
+
+============
+FastAPI Request
+    ↓
+get_db()
+    ↓
+SessionLocal
+    ↓
+Session
+    ↓
+    Engine
+    ↓
+Psycopg
+    ↓
+PostgreSQL
+
+============
+Client
+  │
+  │ POST /restaurants/
+  │ name + address
+  ↓
+FastAPI
+  │
+  │ Depends(get_db)
+  ↓
+SQLAlchemy Session
+  │
+  │ Restaurant(...)
+  ↓
+db.add(restaurant)
+  │
+  ↓
+db.commit()
+  │
+  ↓
+SQLAlchemy
+  │
+  ↓
+Psycopg
+  │
+  ↓
+PostgreSQL
+  │
+  ↓
+db.refresh(restaurant)
+  │
+  ↓
+FastAPI Response
+
+====================
+Frontend / Client
+       │
+       │ POST /restaurants/
+       │
+       ▼
+   FastAPI App
+   (main.py)
+       │
+       │ router
+       ▼
+restaurant.py
+create_restaurant()
+       │
+       │ Depends(get_db)
+       ▼
+SQLAlchemy Session
+       │
+       │ Restaurant(...)
+       ▼
+db.add(restaurant)
+       │
+       ▼
+db.commit()
+       │
+       ▼
+   PostgreSQL
+       │
+       │ row inserted
+       ▼
+db.refresh(restaurant)
+       │
+       ▼
+ FastAPI returns JSON
+       │
+       ▼
+    Frontend 
